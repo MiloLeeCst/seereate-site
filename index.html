@@ -1,11 +1,304 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SeeReate AI</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SeeReate</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle at 50% 35%, #07163d 0%, #020817 55%, #01040f 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        body {
+            position: relative;
+        }
+
+        .page {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 60px;
+            background:
+                radial-gradient(circle at 50% 40%, rgba(23, 72, 170, 0.22), transparent 28%),
+                radial-gradient(circle at 20% 20%, rgba(39, 103, 255, 0.10), transparent 25%),
+                radial-gradient(circle at 80% 80%, rgba(97, 145, 255, 0.08), transparent 25%);
+        }
+
+        .page::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(to bottom, rgba(255,255,255,0.025), transparent 25%, transparent 75%, rgba(255,255,255,0.015)),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 42px 42px, 42px 42px;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+
+        .stars {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 0 8px rgba(255,255,255,0.7);
+            animation: twinkle ease-in-out infinite, drift linear infinite;
+        }
+
+        .star.s1  { top: 10%; left: 14%; width: 2px; height: 2px; animation-duration: 3.2s, 19s; animation-delay: 0s, 0s; }
+        .star.s2  { top: 18%; left: 70%; width: 3px; height: 3px; animation-duration: 4.1s, 24s; animation-delay: 1s, 0s; }
+        .star.s3  { top: 26%; left: 88%; width: 2px; height: 2px; animation-duration: 2.8s, 21s; animation-delay: 0.6s, 0s; }
+        .star.s4  { top: 36%; left: 8%;  width: 2px; height: 2px; animation-duration: 5s, 26s; animation-delay: 1.2s, 0s; }
+        .star.s5  { top: 42%; left: 78%; width: 3px; height: 3px; animation-duration: 3.6s, 18s; animation-delay: 0.3s, 0s; }
+        .star.s6  { top: 52%; left: 15%; width: 2px; height: 2px; animation-duration: 4.6s, 20s; animation-delay: 1.5s, 0s; }
+        .star.s7  { top: 60%; left: 85%; width: 2px; height: 2px; animation-duration: 3.9s, 25s; animation-delay: 0.8s, 0s; }
+        .star.s8  { top: 68%; left: 30%; width: 3px; height: 3px; animation-duration: 4.8s, 22s; animation-delay: 1.7s, 0s; }
+        .star.s9  { top: 76%; left: 60%; width: 2px; height: 2px; animation-duration: 3.4s, 20s; animation-delay: 0.5s, 0s; }
+        .star.s10 { top: 84%; left: 10%; width: 2px; height: 2px; animation-duration: 4.2s, 27s; animation-delay: 1.1s, 0s; }
+        .star.s11 { top: 15%; left: 45%; width: 2px; height: 2px; animation-duration: 3.5s, 17s; animation-delay: 0.2s, 0s; }
+        .star.s12 { top: 72%; left: 92%; width: 3px; height: 3px; animation-duration: 4.7s, 23s; animation-delay: 0.9s, 0s; }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 980px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-wrap {
+            margin-bottom: 18px;
+        }
+
+        .logo-wrap img {
+            width: 450px;
+            max-width: 100vw;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 28px rgba(67, 133, 255, 0.28));
+}
+
+        h1 {
+            font-size: clamp(58px, 9vw, 108px);
+            line-height: 1;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 18px;
+            text-shadow: 0 10px 40px rgba(0,0,0,0.35);
+        }
+
+        .slogan {
+            font-size: clamp(18px, 2.2vw, 24px);
+            color: rgba(255,255,255,0.82);
+            letter-spacing: 0.06em;
+            margin-bottom: 20px;
+        }
+
+        .coming {
+            font-size: 14px;
+            letter-spacing: 0.28em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 46px;
+        }
+
+        .intro-card {
+            width: 100%;
+            max-width: 820px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 28px 26px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 20px 70px rgba(0,0,0,0.28);
+        }
+
+        .intro-title {
+            font-size: 14px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #8fb7ff;
+            margin-bottom: 16px;
+        }
+
+        .intro-text {
+            font-size: 17px;
+            line-height: 1.95;
+            color: rgba(255,255,255,0.78);
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .feature-item {
+            padding: 18px 16px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .feature-item strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .feature-item span {
+            display: block;
+            font-size: 13px;
+            line-height: 1.75;
+            color: rgba(255,255,255,0.62);
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(38px);
+            animation: riseUp 1s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.15s; }
+        .delay-2 { animation-delay: 0.35s; }
+        .delay-3 { animation-delay: 0.55s; }
+        .delay-4 { animation-delay: 0.8s; }
+
+        @keyframes riseUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.18;
+                transform: scale(0.85);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translateY(0px) translateX(0px);
+            }
+            50% {
+                transform: translateY(-12px) translateX(8px);
+            }
+            100% {
+                transform: translateY(0px) translateX(0px);
+            }
+        }
+
+        @media (max-width: 820px) {
+            .intro-card {
+                padding: 24px 18px;
+            }
+
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-text {
+                font-size: 15px;
+                line-height: 1.9;
+            }
+        }
+    </style>
 </head>
-<body style="text-align:center; margin-top:100px; font-family:Arial;">
-    <h1>SeeReate AI</h1>
-    <p>AI-powered visual generation platform</p>
-    <p>Coming soon...</p>
+
+<body>
+    <div class="page">
+        <div class="stars">
+            <span class="star s1"></span>
+            <span class="star s2"></span>
+            <span class="star s3"></span>
+            <span class="star s4"></span>
+            <span class="star s5"></span>
+            <span class="star s6"></span>
+            <span class="star s7"></span>
+            <span class="star s8"></span>
+            <span class="star s9"></span>
+            <span class="star s10"></span>
+            <span class="star s11"></span>
+            <span class="star s12"></span>
+        </div>
+
+        <main class="container">
+            <div class="logo-wrap fade-up delay-1">
+                <img src="image.png" alt="SeeReate Logo" />
+            </div>
+
+            <h1 class="fade-up delay-2">SeeReate</h1>
+
+            <div class="slogan fade-up delay-2">
+                See to Create
+            </div>
+
+            <div class="coming fade-up delay-3">
+                Launching Soon
+            </div>
+
+            <section class="intro-card fade-up delay-4">
+                <div class="intro-title">About SeeReate</div>
+
+                <div class="intro-text">
+                    SeeReate is a visual creation platform built for the next generation of intelligent content experiences.
+                    By connecting perception, creativity, and AI-driven generation, SeeReate aims to transform ideas into
+                    expressive visual outcomes with clarity, efficiency, and imagination.
+                </div>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <strong>Visual Intelligence</strong>
+                        <span>Empowering creative workflows with perceptive and intelligent generation capabilities.</span>
+                    </div>
+                    <div class="feature-item">
+                        <strong>Creative Experience</strong>
+                        <span>Designed to make digital creation more fluid, expressive, and accessible.</span>
+                    </div>
+                    <div class="feature-item">
+                        <strong>Future-Oriented Design</strong>
+                        <span>Built with a modern product vision for the coming era of AI-native visual systems.</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 </body>
 </html>
